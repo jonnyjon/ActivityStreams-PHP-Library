@@ -1,13 +1,57 @@
 <?php
 /*
- * ActivityStrea.ms
- * A PHP class to create ActivityStrea.ms .xml documents
+ * ActivityStrea.ms PHP Library
  * Author: Jon Cianciullo (jon.cianciullo@gmail.com)
  * Homepage: http://github.com/jonnyjon/ActivityStreams-PHP-Library
  * version 0.1
 */
 
 class ActivityStreams {
+	
+	function __construct() {
+	}
+	
+	/*
+	 * Converts RSS data to ActivityStreams format
+	 * Requires SimplePie PHP Library: http://simplepie.org/
+	*/
+	function rss_to_activity_streams($data) {
+		//
+		$feed = new SimplePie();
+		$feed->set_raw_data($data);
+		//
+		unset($data);
+		//
+		$feed->set_stupidly_fast(true);
+		$feed->init();
+		$feed->handle_content_type();
+		//
+		$id = md5($url);
+		$title = 'submit';
+		$link = 'http://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		$activityStream = new ActivityStreamsDoc($id, $title, $link);
+		//
+		foreach($feed->get_items() as $item) :
+			$author = $item->get_author();
+			if(!$author) $author = $feed->get_author();
+			//
+			$activityStream->entry(
+				$item->get_id(),
+				date("r", $item->get_date()),
+				($author ? $author->get_name() : null),
+				($author ? $author->get_link() : null),
+				$item->get_title(),
+				$item->get_permalink(),
+				$item->get_description()
+			);
+		endforeach;
+		
+		return $activityStream;
+	}
+	
+}
+
+class ActivityStreamsDoc extends ActivityStreams {
 	var $xml;	
 	
 	function __construct($id=null, $title=null, $link=null) {

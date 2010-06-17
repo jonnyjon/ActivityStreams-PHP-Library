@@ -2,11 +2,24 @@ A php library for working with the ActivityStreams extension to the Atom feed fo
 
 Requirements:
 PHP
+SimplePie Library (optional) - http://simplepie.org/
 
 Usage:
 
+// Create ActivityStreams document
 require ('activitystreams.php');
-$streamy = new ActivityStreams($id, $title); // create object
+
+$streamy = new ActivityStreamsDoc($id, $title); // create object
 $streamy->entry($id, $published, $name, $uri, $title, $link, $content); // add any number of entries
 header('Content-Type: application/xml; charset=utf-8'); // set the content type
-echo $streamy; // convert to xml string and print to screen
+echo $streamy; // convert to string and print to screen
+
+// Convert RSS to ActivityStreams
+require ('activitystreams.php');
+require ('simplepie.inc');
+
+$data = file_get_contents('http://search.twitter.com/search.atom?q=star+trek'); // get rss/atom data
+$streamy = new ActivityStreams(); // create object
+$rsp = $streamy->rss_to_activity_streams($data); // convert data
+header('Content-Type: application/xml; charset=utf-8'); // set the content type
+echo $rsp; // convert to string and print to screen
