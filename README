@@ -1,0 +1,12 @@
+A php library for working with the ActivityStreams extension to the Atom feed format.
+
+Requirements:
+PHP
+
+Usage:
+
+require ('activitystreams.php');
+$streamy = new ActivityStreams($id, $title); // create object
+$streamy->entry($id, $published, $name, $uri, $title, $link, $content); // add any number of entries
+header('Content-Type: application/xml; charset=utf-8'); // set the content type
+echo $streamy; // convert to xml string and print to screen
