@@ -51,7 +51,7 @@ class ActivityStreams {
 	
 }
 
-class ActivityStreamsDoc extends ActivityStreams {
+class ActivityStreamsDoc {
 	var $xml;	
 	
 	function __construct($id=null, $title=null, $link=null) {
@@ -79,8 +79,8 @@ EOT;
 	
 	function entry($id, $published, $name=null, $uri=null, $title, $link, $content=null) {
 		//
-		$title = '<![CDATA[' . htmlentities($title) . ']]>';
-		$content = '<![CDATA[' . htmlentities($content) . ']]>';
+		$title = '<![CDATA[' . $title . ']]>';
+		$content = '<![CDATA[' . $content . ']]>';
 		//
 		$entry = $this->xml->addChild('entry');
 		$entry->addChild('id', $id);
@@ -129,7 +129,9 @@ EOT;
 		$dom->loadXML($this->xml->asXML());
 		$str = $dom->saveXML();
 		$str = str_replace(' xmlns=""', '', $str);
-		return html_entity_decode($str);
+		$str = str_replace('&lt;![CDATA[', '<![CDATA[', $str);
+		$str = str_replace(']]&gt;', ']]>', $str);
+		return $str;
 	}
 }
 
